@@ -12,7 +12,21 @@ if (!File.Exists(path))
     return 1;
 }
 
-ImportResult<ProductDto> result = ProductCsvImporter.Load(path);
+string ext = Path.GetExtension(path).ToLowerInvariant();
+
+// Вибір імпортера за розширенням файлу
+ImportResult<ProductDto> result = ext switch
+{
+    ".json" => ProductJsonImporter.Load(path),
+    ".csv"  => ProductCsvImporter.Load(path),
+    _       => throw new NotSupportedException($"Непідтримуваний формат: {ext}")
+};
+
+// Завдання 3: статистика одним рядком
+int total  = result.Items.Count + result.Errors.Count;
+double pct = total == 0 ? 0 : result.Errors.Count * 100.0 / total;
+Console.WriteLine($"Статистика: усього={total} прийнято={result.Items.Count} пропущено={result.Errors.Count} помилок={pct:F1}%");
+Console.WriteLine();
 
 Console.WriteLine($"Завантажено записів: {result.Items.Count}");
 foreach (ProductDto p in result.Items.Take(5))
