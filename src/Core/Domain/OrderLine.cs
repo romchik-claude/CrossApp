@@ -26,11 +26,11 @@ public sealed class OrderLine
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Назва товару не може бути порожньою", nameof(name));
         if (price < 0)
-            throw new ArgumentOutOfRangeException(nameof(price), price,
-                "Ціна не може бути від'ємною");
+            throw new ArgumentException(
+                $"Ціна товару {productId} не може бути від'ємною, отримано {price:F2}", nameof(price));
         if (quantity <= 0)
-            throw new ArgumentOutOfRangeException(nameof(quantity), quantity,
-                "Кількість у рядку має бути більшою за нуль");
+            throw new ArgumentException(
+                $"Кількість товару {productId} має бути більшою за нуль, отримано {quantity}", nameof(quantity));
 
         return new OrderLine(productId.Trim(), name.Trim(), price, quantity);
     }
