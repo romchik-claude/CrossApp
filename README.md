@@ -1,4 +1,4 @@
-# CrossApp
+﻿# CrossApp
 
 Наскрізний проєкт з крос-платформного програмування.
 
@@ -39,3 +39,25 @@ Linux-x64 більший на ~2 МБ через відмінності у си�
 - Core/Dto/ – record-типи формату даних (тиждень 3)
 - Core/Domain/ – сутності з поведінкою та інваріантами (тиждень 4)
 - Core/Storage/ – реалізації сховищ (тиждень 5)
+
+## Доменна модель (тиждень 4)
+
+Сутності Order (замовлення) і OrderLine (рядок замовлення) у Core/Domain. Records з Core/Dto лишаються форматом даних: мапінг через ToDto / FromDto.
+
+Інваріанти:
+
+- Номер замовлення і ідентифікатор клієнта не порожні (ArgumentException, Order.Create)
+- Ідентифікатор і назва товару в рядку не порожні (ArgumentException, OrderLine.Create)
+- Кількість у рядку більша за нуль (ArgumentException, OrderLine.Create)
+- Ціна не від'ємна (ArgumentException, OrderLine.Create)
+- Не можна додавати рядки до підтвердженого замовлення (InvalidOperationException, Order.AddLine)
+- Не можна підтвердити порожнє замовлення (InvalidOperationException, Order.Confirm)
+- Не можна підтвердити замовлення двічі (InvalidOperationException, Order.Confirm)
+- FromDto проходить ті самі перевірки, бо відновлює замовлення через Create, AddLine і Confirm
+
+## Режими запуску Cli
+
+- dotnet run --project src/Cli : лаба 4, доменна модель (успіх і порушення інваріантів)
+- dotnet run --project src/Cli -- env : лаба 2, інформація про середовище
+- dotnet run --project src/Cli -- data/sample.csv : лаба 3, імпорт (також sample.json і mixed.csv)
+
